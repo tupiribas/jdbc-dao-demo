@@ -12,9 +12,14 @@ public class Program {
 		
 		SellerDAO sellerDAO = DaoFactory.createSellerDao();
 		
-		Seller seller = sellerDAO.findById(3);
+		Seller seller = sellerDAO.findById(5);
 		
-		System.out.println(seller);
+		if (seller != null) {
+			System.out.println(seller);
+		}
+		else {
+			System.out.println("Nenhum resultado encontrado!");
+		}
 	}
 
 }
