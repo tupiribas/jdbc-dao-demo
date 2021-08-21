@@ -29,7 +29,7 @@ public class DB {
 	
 	private static Properties loadProperties() {
 		try (FileInputStream fis = new FileInputStream("db.properties")){
-			Properties props = loadProperties();
+			Properties props = new Properties();
 			props.load(fis);
 			return props;	
 		} 
@@ -48,10 +48,9 @@ public class DB {
 		}
 	}
 	
-	public static void closeConnection(Connection conn, PreparedStatement stmt) {
+	public static void closeConnection(PreparedStatement stmt) {
 		try {
-			if (conn != null && stmt != null) {
-				conn.close();
+			if (stmt != null) {
 				stmt.close();
 			}
 		} catch (SQLException e) {
@@ -59,15 +58,25 @@ public class DB {
 		}
 	}
 	
-	public static void closeConnection(Connection conn, PreparedStatement stmt, ResultSet rs) {
+	public static void closeConnection(ResultSet rs) {
 		try {
-			if (conn != null && stmt != null && rs != null) {
-				conn.close();
+			if (rs != null) {
+				rs.close();
+			}
+		}
+		catch (SQLException e) {
+			throw new DbException("FAILED TO CLOSE CONNECTION cod.:03>>> " + e.getMessage());
+		}
+	}
+	
+	public static void closeConnection(PreparedStatement stmt, ResultSet rs) {
+		try {
+			if (stmt != null && rs != null) {
 				stmt.close();
 				rs.close();
 			}
 		} catch (SQLException e) {
-			// TODO: handle exception
+			throw new DbException("FAILED TO CLOSE CONNECTION cod.:03>>> " + e.getMessage());
 		}
 	}
 }
