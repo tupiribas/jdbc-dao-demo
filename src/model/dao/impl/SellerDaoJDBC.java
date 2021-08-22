@@ -13,6 +13,7 @@ import java.util.Map;
 
 import db.DB;
 import db.DbException;
+import db.DbIntegrityException;
 import model.dao.SellerDAO;
 import model.entities.Department;
 import model.entities.Seller;
@@ -78,7 +79,7 @@ public class SellerDaoJDBC implements SellerDAO {
 			stmt.executeUpdate();
 		} 
 		catch (SQLException e) {
-			
+			throw new DbException("DATA UPDATE FAILED cod.:09>>> " + e.getMessage());
 		}
 		finally {
 			DB.closeConnection(stmt);
@@ -87,8 +88,25 @@ public class SellerDaoJDBC implements SellerDAO {
 
 	@Override
 	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
-
+		PreparedStatement stmt = null;
+		try {
+			String sql = "DELETE FROM seller WHERE Id = ?";
+			stmt = conn.prepareStatement(sql);
+			
+			stmt.setInt(1, id);
+			
+			int rows = stmt.executeUpdate();
+			
+			if (rows == 0) {
+				throw new DbException("ERROR: ID NON-EXISTENT cod.:011");
+			}
+		} 
+		catch (Exception e) {
+			throw new DbException("FAILED TO DELETE THE DATA cod.:010>>> " + e.getMessage());
+		}
+		finally {
+			DB.closeConnection(stmt);
+		}
 	}
 
 	@Override
