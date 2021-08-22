@@ -1,9 +1,11 @@
 package model.dao.impl;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,16 +18,45 @@ import model.entities.Department;
 import model.entities.Seller;
 
 public class SellerDaoJDBC implements SellerDAO {
-
+	
 	private Connection conn = null;
 
-	public SellerDaoJDBC(Connection conn) {
-		this.conn = conn;
-	}
+	public SellerDaoJDBC(Connection conn) {this.conn = conn;}
 
 	@Override
 	public void insert(Seller obj) {
-		// TODO Auto-generated methasod stub
+		PreparedStatement stmt = null;
+		try {
+			String sql = "INSERT INTO "
+					+ "seller (Name, Email, BirthDate, BaseSalary, DepartmentId) "
+					+ "VALUES (?, ?, ?, ?, ?)";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setString(1, obj.getName());
+			stmt.setString(2, obj.getEmail());
+			stmt.setDate(3, new Date(obj.getBirthDate().getTime()));
+			stmt.setDouble(4, obj.getBaseSalary());
+			stmt.setInt(5, obj.getDepartment().getId());
+			
+			int rowsAffected = stmt.executeUpdate();
+			if (rowsAffected > 0) {
+				ResultSet rs = stmt.getGeneratedKeys();
+				if (rs.next()) {
+					obj.setId(rs.getInt(1));
+				}
+				DB.closeConnection(rs);
+			}
+			else {
+				throw new DbException("UNEXPECTED ERROR! NO ROWS AFFECTED! cod.:08>>> ");
+			}
+			
+		} 
+		catch (SQLException e) {
+			throw new DbException("FAILED TO CATCH THE SELLER cod.:07>>> " + e.getMessage());
+		}
+		finally {
+			DB.closeConnection(stmt);
+		}
 	}
 
 	@Override
