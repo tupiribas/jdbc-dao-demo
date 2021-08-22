@@ -13,7 +13,6 @@ import java.util.Map;
 
 import db.DB;
 import db.DbException;
-import db.DbIntegrityException;
 import model.dao.SellerDAO;
 import model.entities.Department;
 import model.entities.Seller;
