@@ -29,6 +29,13 @@ public class Program2 {
 		String name = sc.nextLine();
 		dep.setName(name);
 		departmentDAO.insert(dep);
+		System.out.println("Departamento inserido com sucesso!");
+		
+		System.out.println("\n=====TESTE 04===== \nAtualizar os dados do departamento");
+		dep = departmentDAO.findById(6);
+		dep.setName("Salada");
+		departmentDAO.update(dep);
+		System.out.println("Departamento alterado com sucesso");
 		
 		
 		
