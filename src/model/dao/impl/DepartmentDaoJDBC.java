@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +23,32 @@ public class DepartmentDaoJDBC implements DepartmentDAO {
 
 	@Override
 	public void insert(Department obj) {
-		// TODO Auto-generated method stub
-
+		PreparedStatement stmt = null;
+		try {
+			String sql = "INSERT INTO department (Name) VALUE (?)";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setString(1, obj.getName());
+			
+			int rows = stmt.executeUpdate();
+			
+			if (rows > 0) {
+				ResultSet rs = stmt.getGeneratedKeys();
+				while (rs.next()) {
+					obj.setId(rs.getInt(1));
+				}
+				DB.closeConnection(rs);
+			}
+			else {
+				throw new DbException("UNEXPECTED ERROR! NO ROWS AFFECTED! cod.:015>>> ");
+			}
+		} 
+		catch (Exception e) {
+			throw new DbException("FAILED TO CATCH THE DEPARTMENT cod.:014>>> " + e.getMessage());
+		}
+		finally {
+			DB.closeConnection(stmt);
+		}
 	}
 
 	@Override
