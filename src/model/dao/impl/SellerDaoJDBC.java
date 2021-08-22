@@ -89,9 +89,47 @@ public class SellerDaoJDBC implements SellerDAO {
 
 	@Override
 	public List<Seller> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			String sql = "SELECT seller.*, department.Name as DepName "
+					+ "FROM seller INNER JOIN department "
+					+ "ON seller.DepartmentId = department.Id ORDER BY Name";
+			stmt = conn.prepareStatement(sql);
+			rs = stmt.executeQuery();
+			
+			List<Seller> listSeller = new ArrayList<>();
+			
+			while (rs.next()) {
+				Department dep = verificationDepartment(rs);
+				Seller obj = instantiateSeller(rs, dep);
+				listSeller.add(obj);
+			}
+			return listSeller;
+		} 
+		catch (SQLException e) {
+			throw new DbException("FAILED TO SHOW SELLER DATA cod.:06>>> " + e.getMessage());
+		}
+		finally {
+			DB.closeConnection(stmt, rs);
+		}
 	}
+
+	private Department verificationDepartment(ResultSet rs) throws SQLException {
+		// Usa-se a coleção de pares map, pois ele não armazena valores repetidos 
+		Map<Integer, Department> map = new HashMap<>();
+		// Se o map.get() já tiver a chave estrangeira DepartmentId como chave do map 
+		Department dep = map.get(rs.getInt("DepartmentId"));
+		// Ele reutiliza a variável dep para verificar se é nulo
+		if (dep == null) {
+			// Instancia e guarda os valores no Map para fazer a próxima verificação
+			dep = instantiateDepartment(rs);
+			map.put(rs.getInt("DepartmentId"), dep);
+		}
+		
+		return dep;
+	}
+	
 
 	@Override
 	public List<Seller> findByDepartment(Department department) {
@@ -109,18 +147,10 @@ public class SellerDaoJDBC implements SellerDAO {
 			rs = stmt.executeQuery();
 			
 			List<Seller> listSeller = new ArrayList<>();
-			Map<Integer, Department> map = new HashMap<>(); 
 			
 			while (rs.next()) {
-				
-				Department dep = map.get(rs.getInt("DepartmentId"));
-				
-				if (dep == null) {
-					dep = instantiateDepartment(rs);
-					map.put(rs.getInt("DepartmentId"), dep);
-				}
+				Department dep = verificationDepartment(rs);				
 				Seller obj = instantiateSeller(rs, dep);
-//				listSeller.stream().map(p -> !p.equals(obj));
 				listSeller.add(obj);
 			}
 			return listSeller;
