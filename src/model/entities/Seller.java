@@ -97,8 +97,8 @@ public class Seller implements Serializable {
 
 	@Override
 	public String toString() {
-		return "|Seller| \n" + getId() + " - " + getName() + " - " + getEmail() + " - " + sdf.format(getBirthDate()) + " - R$"
-				+ String.format("%.2f", getBaseSalary()) + "\n\n|Department| \n" + getDepartment();
+		return getId() + " - " + getName() + " - " + getEmail() + " - " + sdf.format(getBirthDate()) + " - R$"
+				+ String.format("%.2f", getBaseSalary()) + " - " + getDepartment();
 	}
 	
 	
