@@ -43,6 +43,8 @@ public class Program2 {
 		departmentDAO.deleteById(id);
 		System.out.println("Departamento deletado com sucesso");
 		
+		System.out.println("Fim");
+		
 		sc.close();
 		
 	}
