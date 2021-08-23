@@ -17,9 +17,7 @@ public class DepartmentDaoJDBC implements DepartmentDAO {
 
 	private Connection conn;
 
-	public DepartmentDaoJDBC(Connection conn) {
-		this.conn = conn;
-	}
+	public DepartmentDaoJDBC(Connection conn) {this.conn = conn;}
 
 	@Override
 	public void insert(Department obj) {
@@ -73,8 +71,22 @@ public class DepartmentDaoJDBC implements DepartmentDAO {
 
 	@Override
 	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
-
+		PreparedStatement stmt = null;
+		try {
+			String sql = "DELETE FROM department WHERE Id = ?";
+			stmt = conn.prepareStatement(sql);
+			
+			stmt.setInt(1, id);
+			
+			int rows = stmt.executeUpdate();
+			
+			if (rows == 0) {
+				throw new DbException("ERROR: ID NON-EXISTENT cod.:017");
+			}
+		} 
+		catch (SQLException e) {
+			throw new DbException("FAILED TO DELETE THE DATA cod.:016>>> " + e.getMessage());
+		}
 	}
 
 	@Override

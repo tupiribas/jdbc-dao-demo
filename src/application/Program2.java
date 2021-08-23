@@ -37,7 +37,11 @@ public class Program2 {
 		departmentDAO.update(dep);
 		System.out.println("Departamento alterado com sucesso");
 		
-		
+		System.out.println("\n=====TESTE 05===== \nDeletar os dados do departamento");
+		System.out.print("Id: ");
+		int id = sc.nextInt();
+		departmentDAO.deleteById(id);
+		System.out.println("Departamento deletado com sucesso");
 		
 		sc.close();
 		
